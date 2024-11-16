@@ -72,7 +72,7 @@ namespace cosmos::Types{
         [[nodiscard]] auto get_type_string() const -> const std::string&;
         [[nodiscard]] auto get_line() const -> int;
         [[nodiscard]] auto get_lexeme() const -> const std::string&;
-        [[nodiscard]] auto get_optional_literal() const -> const OptionalLiteral; 
+        [[nodiscard]] auto get_optional_literal() const -> const OptionalLiteral&; 
 
         private:
         const TokenType type;

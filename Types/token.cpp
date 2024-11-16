@@ -60,4 +60,44 @@ namespace cosmos::Types{
         }
     } // namespace
 
+
+    Token::Token(TokenType p_type, std::string p_lexeme, OptionalLiteral p_literal, int p_line) 
+    : type(p_type), 
+    lexeme(std::move(p_lexeme)),
+    literal(std::move(p_literal)),
+    line(p_line) {}
+
+    Token::Token(TokenType p_type, const char* p_lexeme, OptionalLiteral p_literal, int p_line) 
+    : type(p_type), 
+    lexeme(p_lexeme),
+    literal(std::move(p_literal)),
+    line(p_line) {}
+
+    Token::Token(TokenType p_type, const char* p_lexeme)
+    : type(p_type), lexeme(p_lexeme) {}
+
+    auto Token::to_string() const -> std::string {
+        std::string result = std::to_string(line) + " " + token_type_string(type) + " " + lexeme;
+
+        result += literal.has_value() ? get_literal_string(literal.value()) : "No Literal";
+
+        return result;
+    }
+
+    
+    auto Token::get_type() const -> TokenType { return this->type; }
+
+    auto Token::get_type_string() const -> const std::string& {
+        return token_type_string(this->type);
+    }
+    
+    auto Token::get_line() const -> int { return this->line; }
+
+    auto Token::get_lexeme() const -> const std::string& { return this->lexeme; }
+
+    auto Token::get_optional_literal() const -> const OptionalLiteral& {
+        return this->literal;
+    }
+
+
 } // namespace cosmos::Types
