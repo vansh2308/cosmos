@@ -11,7 +11,7 @@ namespace cosmos::Types{
     namespace {
         auto token_type_string(const TokenType value) -> const std::string& {
             static const std::map<TokenType, std::string> lookup_table{
-                { TokenType::LEFT_PAREN, "LEFT_PAREN" },
+                {TokenType::LEFT_PAREN, "LEFT_PAREN" },
                 {TokenType::RIGHT_PAREN, "RIGHT_PAREN"},
                 {TokenType::LEFT_BRACE, "LEFT_BRACE"},
                 {TokenType::RIGHT_BRACE, "RIGHT_BRACE"},
@@ -78,26 +78,18 @@ namespace cosmos::Types{
 
     auto Token::to_string() const -> std::string {
         std::string result = std::to_string(line) + " " + token_type_string(type) + " " + lexeme;
-
         result += literal.has_value() ? get_literal_string(literal.value()) : "No Literal";
-
         return result;
     }
 
-    
     auto Token::get_type() const -> TokenType { return this->type; }
 
-    auto Token::get_type_string() const -> const std::string& {
-        return token_type_string(this->type);
-    }
+    auto Token::get_type_string() const -> const std::string& { return token_type_string(this->type); }
     
     auto Token::get_line() const -> int { return this->line; }
 
     auto Token::get_lexeme() const -> const std::string& { return this->lexeme; }
 
-    auto Token::get_optional_literal() const -> const OptionalLiteral& {
-        return this->literal;
-    }
-
+    auto Token::get_optional_literal() const -> const OptionalLiteral& { return this->literal; }
 
 } // namespace cosmos::Types

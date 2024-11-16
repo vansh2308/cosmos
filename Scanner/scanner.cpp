@@ -46,9 +46,26 @@ namespace cosmos{
             return iter->second;
         }
 
+        auto get_lexeme(const std::string& source, size_t start, size_t end) -> std::string {
+            return source.substr(start, end);
+        }
 
+        auto make_optional_literal(TokenType t, const std::string& lexeme) -> OptionalLiteral {
+            switch(t){
+                case TokenType::NUMBER:
+                return Types::make_optional_literal(std::stod(lexeme));
 
+                case TokenType::STRING:
+                return Types::make_optional_literal(lexeme.substr(1, lexeme.size()-2));
+
+                default: return std::nullopt;
+            }
+        }
     } // namespace
+
+
+
+    
     
 
 }
