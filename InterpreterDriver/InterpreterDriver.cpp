@@ -11,11 +11,13 @@
 #include <string>
 #include <vector>
 
-const int EXIT_DATAERR = 65;
-const int EXIT_SOFTWARE = 70;
+
 
 
 namespace cosmos{
+    const int EXIT_DATAERR = 65;
+    const int EXIT_SOFTWARE = 70;
+
     auto InterpreterDriver::run_script(const char* const script_file) -> int{
         const auto source = ([&]() -> std::string {
             try{
