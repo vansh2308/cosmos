@@ -63,9 +63,54 @@ namespace cosmos{
         }
     } // namespace
 
+    // WIP: add eReporter 
+    Scanner::Scanner(const std::string& p_source): source(p_source) {}
+
+    void Scanner::add_token(TokenType t){
+        const std::string lexeme = get_lexeme(source, start, current-start);
+        tokens.emplace_back(t, lexeme, make_optional_literal(t, lexeme), line);
+    }
+
+    void Scanner::advance() { ++current; }
+
+    void Scanner::skip_block_comment(){
+        int nesting = 1;
+        while(nesting > 0){
+            if(peek() == '\0'){
+                // WIP: ereporter 
+                return;
+            }
+            if(peek() == '/' && peek_next() == '*'){
+                advance();
+                ++nesting;
+            } else if (peek() == '*' && peek_next() == '/'){
+                advance();
+                --nesting;
+            } else if (peek() == '\n'){
+                ++line;
+            }
+
+            advance();
+        }
+    }
 
 
-    
+    void Scanner::skip_comment(){
+        while(!is_at_end() && peek() != '\n'){ advance(); }
+    }
+
+    void Scanner::eat_identifier(){
+        while(is_alphanumeric(peek())) advance();
+    }
+
+    void Scanner::eat_number(){
+        while(is_digit(peek())) advance();
+
+        if(peek() == '.' && is_digit(peek_next())){
+            advance();
+            while(is_digit(peek())) advance();
+        }
+    }
     
 
 }
