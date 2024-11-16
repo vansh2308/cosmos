@@ -111,6 +111,35 @@ namespace cosmos{
             while(is_digit(peek())) advance();
         }
     }
-    
+
+    void Scanner::eat_string(){
+        while(!is_at_end() && peek() != '"'){
+            if(peek() == '\n') ++line;
+            advance();
+        }
+        if(is_at_end()){
+            // WIP: ereporter
+        } else {
+            advance();
+        }
+    }
+
+    auto Scanner::is_at_end() -> bool{ return current >= source.size(); }
+
+    auto Scanner::match_next(char expected) -> bool {
+        bool next_matches = (peek() == expected);
+        if(next_matches) advance();
+        return next_matches;
+    } 
+
+    auto Scanner::peek() -> char {
+        if(is_at_end) return '\0';
+        return source[current];
+    }
+
+    auto Scanner::peek_next() -> char {
+        if((current+1) >= source.size())  return '\0';
+        return source[current+1];
+    }
 
 }
