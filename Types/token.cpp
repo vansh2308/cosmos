@@ -53,7 +53,7 @@ namespace cosmos::Types{
                 {TokenType::COSMIC, "COSMIC"},
                 {TokenType::ATOM, "ATOM"},
                 {TokenType::ORBIT, "ORBIT"},
-                {TokenType::LOX_EOF, "LOX_EOF"}
+                {TokenType::CSM_EOF, "CSM_EOF"}
             };
 
             return lookup_table.find(value)->second;

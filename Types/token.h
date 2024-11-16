@@ -44,7 +44,7 @@ namespace cosmos::Types{
         AND,
         GALAXY, //CLASS
         BLACKHOLE, //ELSE
-        VOID, // LOX_FALSE
+        VOID, // CSM_FALSE
         MISSION, //FUNC
         NAVIGATE, //FOR 
         PROBE, //IF 
@@ -54,10 +54,10 @@ namespace cosmos::Types{
         TRANSMIT, //RETURN
         SUPER,
         THIS,
-        COSMIC, // LOX_TRUE
+        COSMIC, // CSM_TRUE
         ATOM, //VAR
         ORBIT, //WHILE      
-        LOX_EOF
+        CSM_EOF
     };
 
 
