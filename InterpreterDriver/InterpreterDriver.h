@@ -7,7 +7,7 @@
 #include <vector>
 
 
-using namespace std;
+
 
 namespace cosmos{
     struct InterpreterDriver{
@@ -17,7 +17,7 @@ namespace cosmos{
         void run_REPL();
 
         private:
-        void interpret(const string& source);
+        void interpret(const std::string& source);
 
         // WIP: Add evaluator, debugger, AST 
 
