@@ -84,6 +84,37 @@ namespace cosmos::AST{
         IfStmtPtr, WhileStmtPtr, ForStmtPtr, FuncStmtPtr, RetStmtPtr, ClassStmtPtr>;
 
 
+    // Utilities to create Expression Pointer Variants  
+    auto create_binary_EPV(ExprPtrVariant left, Token op, ExprPtrVariant right) -> ExprPtrVariant;
+    auto create_unary_EPV(Token op, ExprPtrVariant right) -> ExprPtrVariant;
+    auto create_grouping_EPV(ExprPtrVariant right) -> ExprPtrVariant;
+    auto create_literal_EPV(OptionalLiteral literal) -> ExprPtrVariant;
+    auto create_conditional_EPV(ExprPtrVariant condition, ExprPtrVariant then, ExprPtrVariant else_branch) -> ExprPtrVariant;
+    auto create_postfix_EPV(ExprPtrVariant left, Token op) -> ExprPtrVariant;
+    auto create_variable_EPV(Token var_name) -> ExprPtrVariant;
+    auto create_assignment_EPV(Token var_name, ExprPtrVariant expr) -> ExprPtrVariant;
+    auto create_logical_EPV(ExprPtrVariant left, Token op, ExprPtrVariant right) -> ExprPtrVariant;
+    auto create_call_EPV(ExprPtrVariant calle, Token paren, std::vector<ExprPtrVariant> arguments) -> ExprPtrVariant;
+    auto create_func_EPV(std::vector<Token> params, std::vector<StmtPtrVariant> fn_body) -> ExprPtrVariant;
+    auto create_get_EPV(ExprPtrVariant expr, Token name) -> ExprPtrVariant;
+    auto create_set_EPV(ExprPtrVariant expr, Token name, ExprPtrVariant value) -> ExprPtrVariant;
+    auto create_this_EPV(Token keyword) -> ExprPtrVariant;
+    auto create_super_EPV(Token keyword, Token method) -> ExprPtrVariant;
+
+
+    // Utilities to create Statement Pointer Variants 
+    auto create_expr_SPV(ExprPtrVariant expr) -> StmtPtrVariant;
+    auto create_print_SPV(ExprPtrVariant expr) -> StmtPtrVariant;
+    auto create_block_SPV(std::vector<StmtPtrVariant> statements) -> StmtPtrVariant;
+    auto create_var_SPV(Token var_name, std::optional<ExprPtrVariant> initializer) -> StmtPtrVariant;
+    auto create_if_SPV(ExprPtrVariant condition, StmtPtrVariant then_branch, std::optional<StmtPtrVariant> else_branch) -> StmtPtrVariant;
+    auto create_while_SPV(ExprPtrVariant condition, StmtPtrVariant loopBody) -> StmtPtrVariant;
+    auto create_for_SPV(std::optional<StmtPtrVariant> initializer, std::optional<ExprPtrVariant> condition, std::optional<ExprPtrVariant> increment, StmtPtrVariant loop_body) -> StmtPtrVariant;
+    auto create_func_SPV(Token f_name, FuncExprPtr func_expr) -> StmtPtrVariant;
+    auto create_ret_SPV(Token ret, std::optional<ExprPtrVariant> value) -> StmtPtrVariant;
+    auto create_class_SPV(Token classname, std::optional<ExprPtrVariant> superclass, std::vector<StmtPtrVariant> methods) -> StmtPtrVariant;
+
+
 }
 
 #endif 
