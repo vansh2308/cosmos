@@ -14,10 +14,10 @@ namespace cosmos{
         public:
         InterpreterDriver();
         int run_script(const char* script);
-        // void run_REPL();
+        void run_REPL();
 
         private:
-        // void interpret(const string& source);
+        void interpret(const string& source);
 
         // WIP: Add evaluator, debugger, AST 
 
