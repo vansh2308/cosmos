@@ -142,4 +142,83 @@ namespace cosmos{
         return source[current+1];
     }
 
-}
+    void Scanner::tokeninze_one(){
+        char c = peek();
+        advance();
+        switch(c){
+            case '(': add_token(TokenType::LEFT_PAREN); break;
+            case ')': add_token(TokenType::RIGHT_PAREN); break;
+            case '{': add_token(TokenType::LEFT_BRACE); break;
+            case '}': add_token(TokenType::RIGHT_BRACE); break;
+            case ',': add_token(TokenType::COMMA); break;
+            case ':': add_token(TokenType::COLON); break;
+            case '.': add_token(TokenType::DOT); break;
+            case '?': add_token(TokenType::QUESTION); break;
+            case ';': add_token(TokenType::SEMICOLON); break;
+            case '*': add_token(TokenType::STAR); break;
+            case '!':
+              add_token(match_next('=') ? TokenType::BANG_EQUAL : TokenType::BANG);
+              break;
+            case '=':
+              add_token(match_next('=') ? TokenType::EQUAL_EQUAL : TokenType::EQUAL);
+              break;
+            case '>':
+              add_token(match_next('=') ? TokenType::GREATER_EQUAL : TokenType::GREATER);
+              break;
+            case '<':
+              add_token(match_next('=') ? TokenType::LESS_EQUAL : TokenType::LESS);
+              break;
+            case '-':
+              add_token(match_next('-') ? TokenType::MINUS_MINUS : TokenType::MINUS);
+              break;
+            case '+':
+              add_token(match_next('+') ? TokenType::PLUS_PLUS : TokenType::PLUS);
+              break;
+            case '/':
+              if (match_next('/'))
+                skip_comment();
+              else if (match_next('*'))
+                skip_block_comment();
+              else
+                add_token(TokenType::SLASH);
+              break;
+            case ' ':
+            case '\t':
+            case '\r': break;  // whitespace
+            case '\n': ++line; break;
+            case '"':
+              eat_string();
+              add_token(TokenType::STRING);
+              break;
+
+            default:
+                if(is_digit(c)){
+                    eat_number();
+                    add_token(TokenType::NUMBER);
+                } else if(is_alpha(c)){
+                    eat_identifier();
+                    const std::string identifier = get_lexeme(source, start, current-start);
+                    add_token(reserved_or_identifier(identifier));
+                } else {
+                    std::string message = "Unexpected character: ";
+                    message.append(1, static_cast<char>(c));
+                    // WIP: ereporter 
+                }
+                break;
+        }
+    }
+
+
+    auto Scanner::Tokenize() -> std::vector<Token> {
+        while(!is_at_end()){
+            start = current;
+            tokeninze_one();
+        }
+
+        tokens.emplace_back(TokenType::CSM_EOF, "", std::nullopt, line);
+        std::vector<Token> tokens_vec;
+        std::move(tokens.begin(), tokens.end(), std::back_inserter(tokens_vec));
+        return tokens_vec;
+    }
+
+} // namespace cosmos
