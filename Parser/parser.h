@@ -117,7 +117,7 @@ namespace cosmos::Parser{
         auto consume_one_literal(const std::string& str) -> ExprPtrVariant;
         auto consume_grouping_expr() -> ExprPtrVariant;
         auto consume_postfix_expr(ExprPtrVariant expr) -> ExprPtrVariant;
-        void cosume_semicolon_or_error();
+        void consume_semicolon_or_error();
         auto consume_super() -> ExprPtrVariant;
         auto consume_unary_expr() -> ExprPtrVariant;
         auto consume_var_expr() -> ExprPtrVariant;
