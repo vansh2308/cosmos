@@ -115,6 +115,164 @@ namespace cosmos::AST{
     auto create_class_SPV(Token classname, std::optional<ExprPtrVariant> superclass, std::vector<StmtPtrVariant> methods) -> StmtPtrVariant;
 
 
+    // Expression AST types 
+    struct BinaryExpr final : public Uncopyable {
+      ExprPtrVariant left;
+      Token op;
+      ExprPtrVariant right;
+      BinaryExpr(ExprPtrVariant left, Token op, ExprPtrVariant right);
+    };
+
+    struct GroupingExpr final : public Uncopyable {
+      ExprPtrVariant expression;
+      explicit GroupingExpr(ExprPtrVariant expression);
+    };
+
+    struct LiteralExpr final : public Uncopyable {
+      OptionalLiteral literalVal;
+      explicit LiteralExpr(OptionalLiteral value);
+    };
+
+    struct UnaryExpr final : public Uncopyable {
+      Token op;
+      ExprPtrVariant right;
+      UnaryExpr(Token op, ExprPtrVariant right);
+    };
+
+    struct ConditionalExpr final : public Uncopyable {
+      ExprPtrVariant condition;
+      ExprPtrVariant thenBranch;
+      ExprPtrVariant elseBranch;
+      ConditionalExpr(ExprPtrVariant condition, ExprPtrVariant thenBranch, ExprPtrVariant elseBranch);
+    };
+
+    struct PostfixExpr final : public Uncopyable {
+      ExprPtrVariant left;
+      Token op;
+      PostfixExpr(ExprPtrVariant left, Token op);
+    };
+
+    struct VariableExpr final : public Uncopyable {
+      Token varName;
+      explicit VariableExpr(Token varName);
+    };
+
+    struct AssignmentExpr final : public Uncopyable {
+      Token varName;
+      ExprPtrVariant right;
+      AssignmentExpr(Token varName, ExprPtrVariant right);
+    };
+
+    struct LogicalExpr final : public Uncopyable {
+      ExprPtrVariant left;
+      Token op;
+      ExprPtrVariant right;
+      LogicalExpr(ExprPtrVariant left, Token op, ExprPtrVariant right);
+    };
+
+    struct CallExpr final : public Uncopyable {
+      ExprPtrVariant callee;
+      Token paren;
+      std::vector<ExprPtrVariant> arguments;
+      CallExpr(ExprPtrVariant callee, Token paren, std::vector<ExprPtrVariant> arguments);
+    };
+
+    struct FuncExpr final : public Uncopyable {
+      std::vector<Token> parameters;
+      std::vector<StmtPtrVariant> body;
+      FuncExpr(std::vector<Token> parameters, std::vector<StmtPtrVariant> body);
+    };
+
+    struct GetExpr final : public Uncopyable {
+      ExprPtrVariant expr;
+      Token name;
+      GetExpr(ExprPtrVariant expr, Token name);
+    };
+
+    struct SetExpr final : public Uncopyable {
+      ExprPtrVariant expr;
+      Token name;
+      ExprPtrVariant value;
+      SetExpr(ExprPtrVariant expr, Token name, ExprPtrVariant value);
+    };
+
+    struct ThisExpr final : public Uncopyable {
+      Token keyword;
+      explicit ThisExpr(Token keyword);
+    };
+
+    struct SuperExpr final : public Uncopyable {
+      Token keyword;
+      Token method;
+      explicit SuperExpr(Token keyword, Token method);
+    };
+
+
+
+    // Statement AST types 
+    struct ExprStmt final : public Uncopyable {
+        ExprPtrVariant expression;
+        explicit ExprStmt(ExprPtrVariant expr);
+    };
+
+    struct PrintStmt final : public Uncopyable {
+      ExprPtrVariant expression;
+      explicit PrintStmt(ExprPtrVariant expression);
+    };
+    
+    struct BlockStmt final : public Uncopyable {
+      std::vector<StmtPtrVariant> statements;
+      explicit BlockStmt(std::vector<StmtPtrVariant> statements);
+    };
+    
+    struct VarStmt final : public Uncopyable {
+      Token varName;
+      std::optional<ExprPtrVariant> initializer;
+      explicit VarStmt(Token varName, std::optional<ExprPtrVariant> initializer);
+    };
+    
+    struct IfStmt final : public Uncopyable {
+      ExprPtrVariant condition;
+      StmtPtrVariant thenBranch;
+      std::optional<StmtPtrVariant> elseBranch;
+      explicit IfStmt(ExprPtrVariant condition, StmtPtrVariant thenBranch, std::optional<StmtPtrVariant> elseBranch);
+    };
+    
+    struct WhileStmt final : public Uncopyable {
+      ExprPtrVariant condition;
+      StmtPtrVariant loopBody;
+      explicit WhileStmt(ExprPtrVariant condition, StmtPtrVariant loopBody);
+    };
+    
+    struct ForStmt final : public Uncopyable {
+      std::optional<StmtPtrVariant> initializer;
+      std::optional<ExprPtrVariant> condition;
+      std::optional<ExprPtrVariant> increment;
+      StmtPtrVariant loopBody;
+      explicit ForStmt(std::optional<StmtPtrVariant> initializer, std::optional<ExprPtrVariant> condition,
+            std::optional<ExprPtrVariant> increment, StmtPtrVariant loopBody);
+    };
+    
+    struct FuncStmt : public Uncopyable {
+      Token funcName;
+      FuncExprPtr funcExpr;
+      FuncStmt(Token funcName, FuncExprPtr funcExpr);
+    };
+    
+    struct RetStmt : public Uncopyable {
+      Token ret;
+      std::optional<ExprPtrVariant> value;
+      RetStmt(Token ret, std::optional<ExprPtrVariant> value);
+    };
+    
+    struct ClassStmt : public Uncopyable {
+      Token className;
+      std::optional<ExprPtrVariant> superClass;
+      std::vector<StmtPtrVariant> methods;
+      ClassStmt(Token className, std::optional<ExprPtrVariant> superClass,
+                std::vector<StmtPtrVariant> methods);
+    };
+    
 }
 
 #endif 
