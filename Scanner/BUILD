@@ -6,6 +6,9 @@ cc_library(
     name = "scanner",
     srcs = ["Scanner.cpp"],
     hdrs = ["Scanner.h"],
-    deps = []
+    deps = [
+        "//Types:types"
+    ],
+
 )
 

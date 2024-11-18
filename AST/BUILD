@@ -4,15 +4,15 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "ASTNodes",
-    srcs = ["NodeTypes.cpp"],
-    hdrs = ["NodeTypes.h"],
+    srcs = ["nodeTypes.cpp"],
+    hdrs = ["nodeTypes.h"],
     deps = ["//Types:types"],
 )
 
 cc_library(
     name = "pretty-printer",
-    srcs = ["PrettyPrinter.cpp"],
-    hdrs = ["PrettyPrinter.h"],
+    srcs = ["prettyPrinter.cpp"],
+    hdrs = ["prettyPrinter.h"],
     deps = [
         ":ASTNodes",
         "//Types:types",
