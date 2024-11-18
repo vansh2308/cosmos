@@ -247,13 +247,15 @@ namespace cosmos::Evaluator
         }
 
         // Throw error if arity doesn't match the number of arguments supplied
-        if (size_t arity = funcObj->arity(), numArgs = expr->arguments.size(); EXPECT_FALSE(arity != numArgs))
+        if (size_t arity = funcObj->arity(), numArgs = expr->arguments.size(); EXPECT_FALSE(arity != numArgs)){
             // throw reportRuntimeError(eReporter, expr->paren, "Expected " + std::to_string(arity) + " arguments. Got " + std::to_string(numArgs) + " arguments. ");
 
             // Evaluate Arguments before switching to the next context as the arguments
             // may rely on values in this context (e.g., passing a local variable to a
             // function call.)
-            std::vector<csm_object> evaldArgs;
+        }
+
+        std::vector<csm_object> evaldArgs;
         for (const auto &arg : expr->arguments)
             evaldArgs.push_back(evaluate_expr(arg));
 
@@ -334,9 +336,11 @@ namespace cosmos::Evaluator
     auto Evaluator::evaluate_set_expr(const AST::SetExprPtr &expr) -> csm_object
     {
         csm_object object = evaluate_expr(expr->expr);
-        if (EXPECT_FALSE(!std::holds_alternative<csm_instance_shrd_ptr>(object)))
+        if (EXPECT_FALSE(!std::holds_alternative<csm_instance_shrd_ptr>(object))){
+
             // throw ErrorsAndDebug::reportRuntimeError(eReporter, expr->name, "Only instances have fields.");
-            csm_object value = evaluate_expr(expr->value);
+        }
+        csm_object value = evaluate_expr(expr->value);
         std::get<csm_instance_shrd_ptr>(object)->set(expr->name.get_lexeme(), value);
         return value;
     }
