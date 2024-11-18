@@ -5,19 +5,17 @@
 
 
 int main(int argc, char const *argv[]){
-    cosmos::InterpreterDriver interpreter;
-    cout << interpreter.run_script("hey") << endl;
-
     if (argc > 2){
         std::cout << "Usage: ./csm <script.csm> to execute a script or just ./csm to drop into a REPL";
         std::exit(64);
     }
-    
+
+    cosmos::InterpreterDriver interpreter;
+
     if(argc == 2){
-        // WIP: Script 
+        interpreter.run_script(argv[1]);
     }
 
-    // WIP: REPL
-
+    interpreter.run_REPL();
     return 0;
 }

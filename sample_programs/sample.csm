@@ -1,0 +1,4 @@
+
+atom a = "value";
+atom a = a;
+flare a; // expect: value
