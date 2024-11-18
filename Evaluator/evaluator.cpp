@@ -18,625 +18,608 @@
 #define EXPECT_TRUE(x) __builtin_expect(static_cast<int64_t>(x), 1)
 #define EXPECT_FALSE(x) __builtin_expect(static_cast<int64_t>(x), 0)
 
-namespace cpplox::Evaluator {
+namespace cosmos::Evaluator
+{
 
-// throws RuntimeError if right isn't a double
-auto Evaluator::getDouble(const Token& token, const LoxObject& right)
-    -> double {
-  if (EXPECT_FALSE(!std::holds_alternative<double>(right)))
-    throw reportRuntimeError(
-        eReporter, token,
-        "Attempted to perform arithmetic operation on non-numeric literal "
-            + getObjectString(right));
-  return std::get<double>(right);
-}
-
-auto Evaluator::bindInstance(const FuncShrdPtr& method,
-                             LoxInstanceShrdPtr instance) -> FuncShrdPtr {
-  auto environToRestore = environManager.getCurrEnv();
-  // Set the currentEnviron to the function's closure,
-  environManager.setCurrEnv(method->getClosure());
-  // Create a new environment and define 'this' to point to the instance
-  environManager.createNewEnviron();
-  auto methodClosure = environManager.getCurrEnv();
-  environManager.define("this", instance);
-  // restore the environ.
-  environManager.setCurrEnv(environToRestore);
-  // create and return a new FuncObj that uses this new environ as its closure.
-  return std::make_shared<FuncObj>(method->getDecl(), method->getFnName(),
-                                   methodClosure, method->getIsMethod(),
-                                   method->getIsInitializer());
-}
-
-//===============================//
-// Expression Evaluation Methods //
-//===============================//
-auto Evaluator::evaluateBinaryExpr(const BinaryExprPtr& expr) -> LoxObject {
-  auto left = evaluateExpr(expr->left);
-  auto right = evaluateExpr(expr->right);
-  switch (expr->op.getType()) {
-    case TokenType::COMMA: return right;
-    case TokenType::BANG_EQUAL: return !areEqual(left, right);
-    case TokenType::EQUAL_EQUAL: return areEqual(left, right);
-    case TokenType::MINUS:
-      return getDouble(expr->op, left) - getDouble(expr->op, right);
-    case TokenType::SLASH: {
-      double denominator = getDouble(expr->op, right);
-      if (EXPECT_FALSE(denominator == 0.0))
-        throw reportRuntimeError(eReporter, expr->op,
-                                 "Division by zero is illegal");
-      return getDouble(expr->op, left) / denominator;
+    // throws RuntimeError if right isn't a double
+    auto Evaluator::get_double(const Token &token, const csm_object &right) -> double
+    {
+        if (EXPECT_FALSE(!std::holds_alternative<double>(right)))
+            // throw reportRuntimeError( eReporter, token, "Attempted to perform arithmetic operation on non-numeric literal " + getObjectString(right));
+            return std::get<double>(right);
     }
-    case TokenType::STAR:
-      return getDouble(expr->op, left) * getDouble(expr->op, right);
-    case TokenType::LESS:
-      return getDouble(expr->op, left) < getDouble(expr->op, right);
-    case TokenType::LESS_EQUAL:
-      return getDouble(expr->op, left) <= getDouble(expr->op, right);
-    case TokenType::GREATER:
-      return getDouble(expr->op, left) > getDouble(expr->op, right);
-    case TokenType::GREATER_EQUAL:
-      return getDouble(expr->op, left) >= getDouble(expr->op, right);
-    case TokenType::PLUS: {
-      if (std::holds_alternative<double>(left)
-          && std::holds_alternative<double>(right)) {
-        return std::get<double>(left) + std::get<double>(right);
-      }
-      if (std::holds_alternative<std::string>(left)
-          || std::holds_alternative<std::string>(right)) {
-        return getObjectString(left) + getObjectString(right);
-      }
-      throw reportRuntimeError(
-          eReporter, expr->op,
-          "Operands to 'plus' must be numbers or strings; This is invalid: "
-              + getObjectString(left) + " + " + getObjectString(right));
+
+    auto Evaluator::bind_instance(const func_shrd_ptr &method, csm_instance_shrd_ptr instance) -> func_shrd_ptr
+    {
+        auto environToRestore = environManager.get_curr_env();
+        environManager.set_curr_env(method->get_closure());
+        environManager.create_new_environ();
+        auto methodClosure = environManager.get_curr_env();
+        environManager.define("this", instance);
+        environManager.set_curr_env(environToRestore);
+        return std::make_shared<FuncObj>(method->get_decl(), method->get_fn_name(), methodClosure, method->get_is_method(), method->get_is_initalizer());
     }
-    default:
-      throw reportRuntimeError(
-          eReporter, expr->op,
-          "Attempted to apply invalid operator to binary expr: "
-              + expr->op.getTypeString());
-  }
-}
 
-auto Evaluator::evaluateGroupingExpr(const GroupingExprPtr& expr) -> LoxObject {
-  return evaluateExpr(expr->expression);
-}
+    // ------------------ Expression Evaluation Methods ------------------
+    auto Evaluator::evaluate_binary_expr(const BinaryExprPtr &expr) -> csm_object
+    {
+        auto left = evaluate_expr(expr->left);
+        auto right = evaluate_expr(expr->right);
+        switch (expr->op.get_type())
+        {
+        case TokenType::COMMA:
+            return right;
+        case TokenType::BANG_EQUAL:
+            return !are_equal(left, right);
+        case TokenType::EQUAL_EQUAL:
+            return are_equal(left, right);
+        case TokenType::MINUS:
+            return get_double(expr->op, left) - get_double(expr->op, right);
+        case TokenType::SLASH:
+        {
+            double denominator = get_double(expr->op, right);
+            if (EXPECT_FALSE(denominator == 0.0))
+                // throw reportRuntimeError(eReporter, expr->op, "Division by zero is illegal");
+                return get_double(expr->op, left) / denominator;
+        }
+        case TokenType::STAR:
+            return get_double(expr->op, left) * get_double(expr->op, right);
+        case TokenType::LESS:
+            return get_double(expr->op, left) < get_double(expr->op, right);
+        case TokenType::LESS_EQUAL:
+            return get_double(expr->op, left) <= get_double(expr->op, right);
+        case TokenType::GREATER:
+            return get_double(expr->op, left) > get_double(expr->op, right);
+        case TokenType::GREATER_EQUAL:
+            return get_double(expr->op, left) >= get_double(expr->op, right);
+        case TokenType::PLUS:
+        {
+            if (std::holds_alternative<double>(left) && std::holds_alternative<double>(right))
+            {
+                return std::get<double>(left) + std::get<double>(right);
+            }
+            if (std::holds_alternative<std::string>(left) || std::holds_alternative<std::string>(right))
+            {
+                return get_object_string(left) + get_object_string(right);
+            }
+            //   throw reportRuntimeError( eReporter, expr->op, "Operands to 'plus' must be numbers or strings; This is invalid: " + getObjectString(left) + " + " + getObjectString(right));
+        }
+        default:
+            //   throw reportRuntimeError( eReporter, expr->op, "Attempted to apply invalid operator to binary expr: " + expr->op.getTypeString());
+        }
+    }
 
-namespace {
-auto getLoxObjectfromStringLiteral(const Literal& strLiteral) -> LoxObject {
-  const auto& str = std::get<std::string>(strLiteral);
-  if (str == "true") return LoxObject(true);
-  if (str == "false") return LoxObject(false);
-  if (str == "nil") return LoxObject(nullptr);
-  return LoxObject(str);
-};
-}  // namespace
+    auto Evaluator::evaluate_grouping_expr(const GroupingExprPtr &expr) -> csm_object
+    {
+        return evaluate_expr(expr->expression);
+    }
 
-auto Evaluator::evaluateLiteralExpr(const LiteralExprPtr& expr) -> LoxObject {
-  return expr->literalVal.has_value()
-             ? std::holds_alternative<std::string>(expr->literalVal.value())
-                   ? getLoxObjectfromStringLiteral(expr->literalVal.value())
-                   : LoxObject(std::get<double>(expr->literalVal.value()))
-             : LoxObject(nullptr);
-}
+    namespace
+    {
+        auto getLoxObjectfromStringLiteral(const Literal &strLiteral) -> csm_object
+        {
+            const auto &str = std::get<std::string>(strLiteral);
+            if (str == "true")
+                return csm_object(true);
+            if (str == "false")
+                return csm_object(false);
+            if (str == "nil")
+                return csm_object(nullptr);
+            return csm_object(str);
+        };
+    } // namespace
 
-auto Evaluator::evaluateUnaryExpr(const UnaryExprPtr& expr) -> LoxObject {
-  LoxObject right = evaluateExpr(expr->right);
-  switch (expr->op.getType()) {
-    case TokenType::BANG: return !isTrue(right);
-    case TokenType::MINUS: return -getDouble(expr->op, right);
-    case TokenType::PLUS_PLUS: return getDouble(expr->op, right) + 1;
-    case TokenType::MINUS_MINUS: return getDouble(expr->op, right) - 1;
-    default:
-      throw reportRuntimeError(
-          eReporter, expr->op,
-          "Illegal unary expression: " + expr->op.getLexeme()
-              + getObjectString(right));
-  }
-}
+    auto Evaluator::evaluate_literal_expr(const LiteralExprPtr &expr) -> csm_object
+    {
+        return expr->literalVal.has_value() ? std::holds_alternative<std::string>(expr->literalVal.value()) ? getLoxObjectfromStringLiteral(expr->literalVal.value()) : csm_object(std::get<double>(expr->literalVal.value())) : csm_object(nullptr);
+    }
 
-auto Evaluator::evaluateConditionalExpr(const ConditionalExprPtr& expr)
-    -> LoxObject {
-  if (isTrue(evaluateExpr(expr->condition)))
-    return evaluateExpr(expr->thenBranch);
-  return evaluateExpr(expr->elseBranch);
-}
+    auto Evaluator::evaluate_unary_expr(const UnaryExprPtr &expr) -> csm_object
+    {
+        csm_object right = evaluate_expr(expr->right);
+        switch (expr->op.get_type())
+        {
+        case TokenType::BANG:
+            return !is_true(right);
+        case TokenType::MINUS:
+            return -get_double(expr->op, right);
+        case TokenType::PLUS_PLUS:
+            return get_double(expr->op, right) + 1;
+        case TokenType::MINUS_MINUS:
+            return get_double(expr->op, right) - 1;
+        default:
+            //   throw reportRuntimeError( eReporter, expr->op, "Illegal unary expression: " + expr->op.get_lexeme() + getObjectString(right));
+        }
+    }
 
-auto Evaluator::evaluateVariableExpr(const VariableExprPtr& expr) -> LoxObject {
-  return environManager.get(expr->varName);
-}
+    auto Evaluator::evaluate_conditional_expr(const ConditionalExprPtr &expr) -> csm_object
+    {
+        if (is_true(evaluate_expr(expr->condition)))
+            return evaluate_expr(expr->thenBranch);
+        return evaluate_expr(expr->elseBranch);
+    }
 
-auto Evaluator::evaluateAssignmentExpr(const AssignmentExprPtr& expr)
-    -> LoxObject {
-  environManager.assign(expr->varName, evaluateExpr(expr->right));
-  return environManager.get(expr->varName);
-}
+    auto Evaluator::evaluate_variable_expr(const VariableExprPtr &expr) -> csm_object
+    {
+        return environManager.get(expr->varName);
+    }
 
-namespace {
-auto match(const Token& token, Types::TokenType tType) -> bool {
-  return token.getType() == tType;
-}
+    auto Evaluator::evaluate_assignment_expr(const AssignmentExprPtr &expr) -> csm_object
+    {
+        environManager.assign(expr->varName, evaluate_expr(expr->right));
+        return environManager.get(expr->varName);
+    }
 
-auto doPostfixOp(const Token& op, const LoxObject& val) -> LoxObject {
-  if (EXPECT_TRUE(std::holds_alternative<double>(val))) {
-    double dVal = std::get<double>(val);
-    if (match(op, TokenType::PLUS_PLUS)) return LoxObject(++dVal);
-    if (match(op, TokenType::MINUS_MINUS)) return LoxObject(--dVal);
-  }
-  throw ErrorsAndDebug::RuntimeError();
-}
-}  // namespace
+    namespace
+    {
+        auto match(const Token &token, Types::TokenType tType) -> bool
+        {
+            return token.get_type() == tType;
+        }
 
-auto Evaluator::evaluatePostfixExpr(const PostfixExprPtr& expr) -> LoxObject {
-  LoxObject leftVal = evaluateExpr(expr->left);
-  if (EXPECT_TRUE(std::holds_alternative<VariableExprPtr>(expr->left))) {
-    environManager.assign((std::get<VariableExprPtr>(expr->left))->varName,
-                          doPostfixOp(expr->op, leftVal));
-  }
-  return leftVal;
-}
+        auto doPostfixOp(const Token &op, const csm_object &val) -> csm_object
+        {
+            if (EXPECT_TRUE(std::holds_alternative<double>(val)))
+            {
+                double dVal = std::get<double>(val);
+                if (match(op, TokenType::PLUS_PLUS))
+                    return csm_object(++dVal);
+                if (match(op, TokenType::MINUS_MINUS))
+                    return csm_object(--dVal);
+            }
+            //   throw ErrorsAndDebug::RuntimeError();
+        }
+    } // namespace
 
-auto Evaluator::evaluateLogicalExpr(const LogicalExprPtr& expr) -> LoxObject {
-  LoxObject leftVal = evaluateExpr(expr->left);
-  if (expr->op.getType() == TokenType::OR)
-    return isTrue(leftVal) ? leftVal : evaluateExpr(expr->right);
-  if (expr->op.getType() == TokenType::AND)
-    return !isTrue(leftVal) ? leftVal : evaluateExpr(expr->right);
+    auto Evaluator::evaluate_postfix_expr(const PostfixExprPtr &expr) -> csm_object
+    {
+        csm_object leftVal = evaluate_expr(expr->left);
+        if (EXPECT_TRUE(std::holds_alternative<VariableExprPtr>(expr->left)))
+        {
+            environManager.assign((std::get<VariableExprPtr>(expr->left))->varName, doPostfixOp(expr->op, leftVal));
+        }
+        return leftVal;
+    }
 
-  throw reportRuntimeError(eReporter, expr->op,
-                           "Illegal logical operator: " + expr->op.getLexeme());
-}
+    auto Evaluator::evaluate_logical_expr(const LogicalExprPtr &expr) -> csm_object
+    {
+        csm_object leftVal = evaluate_expr(expr->left);
+        if (expr->op.get_type() == TokenType::OR)
+            return is_true(leftVal) ? leftVal : evaluate_expr(expr->right);
+        if (expr->op.get_type() == TokenType::AND)
+            return !is_true(leftVal) ? leftVal : evaluate_expr(expr->right);
 
-auto Evaluator::evaluateCallExpr(const CallExprPtr& expr) -> LoxObject {
-  LoxObject callee = evaluateExpr(expr->callee);
+        //   throw reportRuntimeError(eReporter, expr->op, "Illegal logical operator: " + expr->op.get_lexeme());
+    }
+
+    auto Evaluator::evaluate_call_expr(const CallExprPtr &expr) -> csm_object
+    {
+        csm_object callee = evaluate_expr(expr->callee);
 
 #ifdef EVAL_DEBUG
-  ErrorsAndDebug::debugPrint("evaluateCallExpr called. Callee:"
-                             + getObjectString(callee));
-#endif  // EVAL_DEBUG
+//   ErrorsAndDebug::debugPrint("evaluateCallExpr called. Callee:" + getObjectString(callee));
+#endif // EVAL_DEBUG
 
-  if (EXPECT_FALSE(std::holds_alternative<BuiltinFuncShrdPtr>(callee))) {
-    // TODO(aakshintala): Currently this doesn't check arity or copy params, cos
-    // we don't need that at the moment cos we just have one builtin: clock.
-    // A correct implementation would look more like the rest of function call.
-    // Also just use the visitor pattern with double dispatch next time.
-    return std::get<BuiltinFuncShrdPtr>(callee)->run();
-  }
+        if (EXPECT_FALSE(std::holds_alternative<built_in_func_shrd_ptr>(callee)))
+        {
+            // TODO(aakshintala): Currently this doesn't check arity or copy params, cos
+            // we don't need that at the moment cos we just have one builtin: clock.
+            // A correct implementation would look more like the rest of function call.
+            // Also just use the visitor pattern with double dispatch next time.
+            return std::get<built_in_func_shrd_ptr>(callee)->run();
+        }
 
-  LoxObject instanceOrNull = ([&]() -> LoxObject {
-    if (EXPECT_FALSE(std::holds_alternative<LoxClassShrdPtr>(callee)))
-      return LoxObject(
-          std::make_shared<LoxInstance>(std::get<LoxClassShrdPtr>(callee)));
-    return LoxObject(nullptr);
-  })();
+        csm_object instanceOrNull = ([&]() -> csm_object
+                                     {
+    if (EXPECT_FALSE(std::holds_alternative<csm_class_shrd_ptr>(callee)))
+      return csm_object(
+          std::make_shared<CsmInstance>(std::get<csm_class_shrd_ptr>(callee)));
+    return csm_object(nullptr); })();
 
-  const FuncShrdPtr funcObj = ([&]() -> FuncShrdPtr {
-    if (std::holds_alternative<LoxClassShrdPtr>(callee)) {
-      auto instance = std::get<LoxInstanceShrdPtr>(instanceOrNull);
-      try {
-        return bindInstance(std::get<FuncShrdPtr>(instance->get("init")),
-                            instance);
-      } catch (const ErrorsAndDebug::RuntimeError& e) {
-        return nullptr;
-      }
-    }
+        const func_shrd_ptr funcObj = ([&]() -> func_shrd_ptr
+                                       {
+                                           if (std::holds_alternative<csm_class_shrd_ptr>(callee))
+                                           {
+                                               auto instance = std::get<csm_instance_shrd_ptr>(instanceOrNull);
+                                               try
+                                               {
+                                                   return bind_instance(std::get<func_shrd_ptr>(instance->get("init")), instance);
 
-    if (EXPECT_TRUE(std::holds_alternative<FuncShrdPtr>(callee)))
-      return std::get<FuncShrdPtr>(callee);
+                                                   //  WIP:  } catch (const ErrorsAndDebug::RuntimeError& e) {
+                                               }
+                                               catch (std::exception &e)
+                                               {
+                                                   return nullptr;
+                                               }
+                                           }
 
-    throw reportRuntimeError(eReporter, expr->paren,
-                             "Attempted to invoke a non-function");
-  })();
+                                           if (EXPECT_TRUE(std::holds_alternative<func_shrd_ptr>(callee)))
+                                               return std::get<func_shrd_ptr>(callee);
 
-  if (funcObj.get() == nullptr) {
-    // exit early if there is no initializer; safe because we only come here if
-    // this callee is a constructor and there is no initializer.
-    return instanceOrNull;
-  }
+                                           // throw reportRuntimeError(eReporter, expr->paren, "Attempted to invoke a non-function");
+                                       })();
 
-  // Throw error if arity doesn't match the number of arguments supplied
-  if (size_t arity = funcObj->arity(), numArgs = expr->arguments.size();
-      EXPECT_FALSE(arity != numArgs))
-    throw reportRuntimeError(eReporter, expr->paren,
-                             "Expected " + std::to_string(arity)
-                                 + " arguments. Got " + std::to_string(numArgs)
-                                 + " arguments. ");
+        if (funcObj.get() == nullptr)
+        {
+            // exit early if there is no initializer; safe because we only come here if
+            // this callee is a constructor and there is no initializer.
+            return instanceOrNull;
+        }
 
-  // Evaluate Arguments before switching to the next context as the arguments
-  // may rely on values in this context (e.g., passing a local variable to a
-  // function call.)
-  std::vector<LoxObject> evaldArgs;
-  for (const auto& arg : expr->arguments)
-    evaldArgs.push_back(evaluateExpr(arg));
+        // Throw error if arity doesn't match the number of arguments supplied
+        if (size_t arity = funcObj->arity(), numArgs = expr->arguments.size(); EXPECT_FALSE(arity != numArgs))
+            // throw reportRuntimeError(eReporter, expr->paren, "Expected " + std::to_string(arity) + " arguments. Got " + std::to_string(numArgs) + " arguments. ");
 
-  // Save caller's environ so we can restore it later
-  auto environToRestore = environManager.getCurrEnv();
-  // Set the currentEnviron to the function's closure,
-  environManager.setCurrEnv(funcObj->getClosure());
-  // Create a new Environ for the function so it doesn't dirty the closure.
-  environManager.createNewEnviron();
+            // Evaluate Arguments before switching to the next context as the arguments
+            // may rely on values in this context (e.g., passing a local variable to a
+            // function call.)
+            std::vector<csm_object> evaldArgs;
+        for (const auto &arg : expr->arguments)
+            evaldArgs.push_back(evaluate_expr(arg));
 
-  {  // Define each parameter with evaluated argument
-    const auto& params = funcObj->getParams();
-    auto param = params.begin();
-    auto arg = evaldArgs.begin();
-    for (; param != params.end() && arg != evaldArgs.end(); ++param, ++arg) {
-      environManager.define(*param, *arg);
-    }
-  }
+        // Save caller's environ so we can restore it later
+        auto environToRestore = environManager.get_curr_env();
+        // Set the currentEnviron to the function's closure,
+        environManager.set_curr_env(funcObj->get_closure());
+        // Create a new Environ for the function so it doesn't dirty the closure.
+        environManager.create_new_environ();
 
-#ifdef EVAL_DEBUG
-  ErrorsAndDebug::debugPrint("FnBodyStmts:");
-  for (const auto& stmt :
-       AST::PrettyPrinter::toString(funcObj->getFnBodyStmts()))
-    ErrorsAndDebug::debugPrint(stmt);
-#endif  // EVAL_DEBUG
-
-  // Evaluate the function
-  std::optional<LoxObject> fnRet = evaluateStmts(funcObj->getFnBodyStmts());
-
-  // Teardown any environments created by the function.
-  if (!funcObj->getIsMethod())
-    environManager.discardEnvironsTill(funcObj->getClosure());
-  else
-    environManager.discardEnvironsTill(funcObj->getClosure()->getParentEnv());
-  // Restore caller's environment.
-  environManager.setCurrEnv(environToRestore);
-
-  // return result or LoxObject(nullptr);
-  if (fnRet.has_value()) {
-    if (EXPECT_FALSE(funcObj->getIsInitializer()))
-      throw ErrorsAndDebug::reportRuntimeError(
-          eReporter, expr->paren,
-          "Initializer can't return a value other than 'this'");
-    return fnRet.value();
-  }
-  return instanceOrNull;
-}
-
-auto Evaluator::evaluateFuncExpr(const FuncExprPtr& expr) -> LoxObject {
-  // The current Environment becomes the closure for the function.
-  auto closure = environManager.getCurrEnv();
-  // We also create a new environment because we don't want any redefinitions of
-  // variables that are later in the program lexical order to be visible to this
-  // function (in case it's stored and passed around). This environment creation
-  // isn't paired with a destruction in this function. The environment will be
-  // discarded when exiting wrapping scope this function is defined in (and the
-  // FuncObj goes out of scope.)
-  environManager.createNewEnviron();
-  return std::make_shared<FuncObj>(expr, "LoxAnonFuncDoNotUseThisNameAADWAED",
-                                   std::move(closure));
-}
-
-auto Evaluator::evaluateGetExpr(const GetExprPtr& expr) -> LoxObject {
-  LoxObject instObj = evaluateExpr(expr->expr);
-  if (EXPECT_FALSE(!std::holds_alternative<LoxInstanceShrdPtr>(instObj)))
-    throw reportRuntimeError(eReporter, expr->name,
-                             "Only instances have properties");
-  try {
-    LoxObject property
-        = std::get<LoxInstanceShrdPtr>(instObj)->get(expr->name.getLexeme());
-    if (std::holds_alternative<FuncShrdPtr>(property)) {
-      // if it's a method that we just looked up, then we need to create a
-      // binding for 'this'
-      property = LoxObject(bindInstance(std::get<FuncShrdPtr>(property),
-                                        std::get<LoxInstanceShrdPtr>(instObj)));
-    }
-    return property;
-  } catch (const ErrorsAndDebug::RuntimeError& e) {
-    throw ErrorsAndDebug::reportRuntimeError(
-        eReporter, expr->name,
-        "Attempted to access undefined property: " + expr->name.getLexeme()
-            + " on " + std::get<LoxInstanceShrdPtr>(instObj)->toString());
-  }
-}
-
-auto Evaluator::evaluateSetExpr(const AST::SetExprPtr& expr) -> LoxObject {
-  LoxObject object = evaluateExpr(expr->expr);
-  if (EXPECT_FALSE(!std::holds_alternative<LoxInstanceShrdPtr>(object)))
-    throw ErrorsAndDebug::reportRuntimeError(eReporter, expr->name,
-                                             "Only instances have fields.");
-  LoxObject value = evaluateExpr(expr->value);
-  std::get<LoxInstanceShrdPtr>(object)->set(expr->name.getLexeme(), value);
-  return value;
-}
-
-auto Evaluator::evaluateThisExpr(const ThisExprPtr& expr) -> LoxObject {
-  return environManager.get(expr->keyword);
-}
-
-auto Evaluator::evaluateSuperExpr(const SuperExprPtr& expr) -> LoxObject {
-  LoxClassShrdPtr superClass
-      = std::get<LoxClassShrdPtr>(environManager.get(expr->keyword));
-  auto optionalMethod = superClass->findMethod(expr->method.getLexeme());
-  if (!optionalMethod.has_value())
-    throw ErrorsAndDebug::reportRuntimeError(
-        eReporter, expr->keyword,
-        "Attempted to access undefined property " + expr->keyword.getLexeme()
-            + " on super.");
-
-  return bindInstance(std::get<FuncShrdPtr>(optionalMethod.value()),
-                      std::get<LoxInstanceShrdPtr>(
-                          environManager.get(Token(TokenType::THIS, "this"))));
-}
-
-auto Evaluator::evaluateExpr(const ExprPtrVariant& expr) -> LoxObject {
-  switch (expr.index()) {
-    case 0:  // BinaryExprPtr
-      return evaluateBinaryExpr(std::get<0>(expr));
-    case 1:  // GroupingExprPtr
-      return evaluateGroupingExpr(std::get<1>(expr));
-    case 2:  // LiteralExprPtr
-      return evaluateLiteralExpr(std::get<2>(expr));
-    case 3:  // UnaryExprPtr
-      return evaluateUnaryExpr(std::get<3>(expr));
-    case 4:  // ConditionalExprPtr
-      return evaluateConditionalExpr(std::get<4>(expr));
-    case 5:  // PostfixExprPtr
-      return evaluatePostfixExpr(std::get<5>(expr));
-    case 6:  // VariableExprPtr
-      return evaluateVariableExpr(std::get<6>(expr));
-    case 7:  // AssignmentExprPtr
-      return evaluateAssignmentExpr(std::get<7>(expr));
-    case 8:  // LogicalExprPtr
-      return evaluateLogicalExpr(std::get<8>(expr));
-    case 9:  // CallExprPtr
-      return evaluateCallExpr(std::get<9>(expr));
-    case 10:  // FuncExprPtr
-      return evaluateFuncExpr(std::get<10>(expr));
-    case 11:  // GetExprPtr
-      return evaluateGetExpr(std::get<11>(expr));
-    case 12:  // SetExprPtr
-      return evaluateSetExpr(std::get<12>(expr));
-    case 13:  // ThisExprPtr
-      return evaluateThisExpr(std::get<13>(expr));
-    case 14:  // SuperExprPtr
-      return evaluateSuperExpr(std::get<14>(expr));
-    default:
-      static_assert(std::variant_size_v<ExprPtrVariant> == 15,
-                    "Looks like you forgot to update the cases in "
-                    "Evaluator::Evaluate(const ExptrVariant&)!");
-      return "";
-  }
-}
-
-//==============================//
-// Statement Evaluation Methods //
-//==============================//
-auto Evaluator::evaluateExprStmt(const ExprStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-#ifdef EVAL_DEBUG
-  ErrorsAndDebug::debugPrint("evaluateExprStmt called.");
-#endif  // EVAL_DEBUG
-
-  LoxObject result = evaluateExpr(stmt->expression);
+        { // Define each parameter with evaluated argument
+            const auto &params = funcObj->get_params();
+            auto param = params.begin();
+            auto arg = evaldArgs.begin();
+            for (; param != params.end() && arg != evaldArgs.end(); ++param, ++arg)
+            {
+                environManager.define(*param, *arg);
+            }
+        }
 
 #ifdef EVAL_DEBUG
-  ErrorsAndDebug::debugPrint("evaluateExprStmt: expression evaluation result: "
-                             + getObjectString(result));
-#endif  // EVAL_DEBUG
-  return std::nullopt;
-}
+        ErrorsAndDebug::debugPrint("FnBodyStmts:");
+        for (const auto &stmt :
+             AST::PrettyPrinter::toString(funcObj->getFnBodyStmts()))
+            ErrorsAndDebug::debugPrint(stmt);
+#endif // EVAL_DEBUG
 
-auto Evaluator::evaluatePrintStmt(const PrintStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-#ifdef EVAL_DEBUG
-  ErrorsAndDebug::debugPrint("evaluatePrintStmt called.");
-#endif  // EVAL_DEBUG
+        // Evaluate the function
+        std::optional<csm_object> fnRet = evaluate_stmts(funcObj->get_fn_body_stmts());
 
-  LoxObject objectToPrint = evaluateExpr(stmt->expression);
-  std::cout << ">" << getObjectString(objectToPrint) << std::endl;
+        // Teardown any environments created by the function.
+        if (!funcObj->get_is_method())
+            environManager.discard_environs_till(funcObj->get_closure());
+        else
+            environManager.discard_environs_till(funcObj->get_closure()->get_parent_env());
+        // Restore caller's environment.
+        environManager.set_curr_env(environToRestore);
 
-#ifdef EVAL_DEBUG
-  ErrorsAndDebug::debugPrint("evaluatePrintStmt should have printed."
-                             + getObjectString(objectToPrint));
-#endif  // EVAL_DEBUG
-  return std::nullopt;
-}
-
-auto Evaluator::evaluateBlockStmt(const BlockStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-  auto currEnviron = environManager.getCurrEnv();
-  environManager.createNewEnviron();
-  std::optional<LoxObject> result = evaluateStmts(stmt->statements);
-  environManager.discardEnvironsTill(currEnviron);
-  return result;
-}
-
-auto Evaluator::evaluateVarStmt(const VarStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-  if (stmt->initializer.has_value()) {
-    environManager.define(stmt->varName,
-                          evaluateExpr(stmt->initializer.value()));
-  } else {
-    environManager.define(stmt->varName, LoxObject(nullptr));
-  }
-  return std::nullopt;
-}
-
-auto Evaluator::evaluateIfStmt(const IfStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-  if (isTrue(evaluateExpr(stmt->condition)))
-    return evaluateStmt(stmt->thenBranch);
-  if (stmt->elseBranch.has_value())
-    return evaluateStmt(stmt->elseBranch.value());
-  return std::nullopt;
-}
-
-auto Evaluator::evaluateWhileStmt(const WhileStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-  std::optional<LoxObject> result = std::nullopt;
-  while (isTrue(evaluateExpr(stmt->condition)) && !result.has_value()) {
-    result = evaluateStmt(stmt->loopBody);
-  }
-  return result;
-}
-
-auto Evaluator::evaluateForStmt(const ForStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-  std::optional<LoxObject> result = std::nullopt;
-  if (stmt->initializer.has_value()) evaluateStmt(stmt->initializer.value());
-  while (true) {
-    if (stmt->condition.has_value()
-        && !isTrue(evaluateExpr(stmt->condition.value())))
-      break;
-    result = evaluateStmt(stmt->loopBody);
-    if (result.has_value()) break;
-    if (stmt->increment.has_value()) evaluateExpr(stmt->increment.value());
-  }
-  return result;
-}
-
-auto Evaluator::evaluateFuncStmt(const FuncStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-  // The current Environment becomes the closure for the function.
-  std::shared_ptr<Environment> closure = environManager.getCurrEnv();
-  // Create a FuncObj for the function, and hand it off to environment to store
-  environManager.define(
-      stmt->funcName,
-      std::make_shared<FuncObj>(stmt->funcExpr, stmt->funcName.getLexeme(),
-                                std::move(closure)));
-  // We also create a new environment because we don't want any redefinitions of
-  // variables that are later in the program lexical order to be visible to this
-  // function (in case it's stored and passed around). This environment creation
-  // isn't paired with a destruction in this function. The environment will be
-  // discarded when exiting wrapping scope this function is defined in (and the
-  // FuncObj goes out of scope.)
-  environManager.createNewEnviron();
-  return std::nullopt;
-}
-
-auto Evaluator::evaluateRetStmt(const RetStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-  return stmt->value.has_value()
-             ? std::make_optional(evaluateExpr(stmt->value.value()))
-             : std::nullopt;
-}
-
-auto Evaluator::evaluateClassStmt(const ClassStmtPtr& stmt)
-    -> std::optional<LoxObject> {
-  // Determine if this class has a super class or not;
-  auto superClass = [&]() -> std::optional<LoxClassShrdPtr> {
-    if (stmt->superClass.has_value()) {
-      auto superClassObj = evaluateExpr(stmt->superClass.value());
-      if (!std::holds_alternative<LoxClassShrdPtr>(superClassObj))
-        throw ErrorsAndDebug::reportRuntimeError(
-            eReporter, stmt->className,
-            "Superclass must be a class; Can't inherit from non-class");
-      return std::get<LoxClassShrdPtr>(superClassObj);
+        // return result or csm_object(nullptr);
+        if (fnRet.has_value())
+        {
+            if (EXPECT_FALSE(funcObj->get_is_initalizer()))
+                //   throw ErrorsAndDebug::reportRuntimeError( eReporter, expr->paren, "Initializer can't return a value other than 'this'");
+                return fnRet.value();
+        }
+        return instanceOrNull;
     }
-    return std::nullopt;
-  }();
 
-  // Define the class name in the current environment
-  environManager.define(stmt->className, LoxObject(nullptr));
-
-  // If there is a super class, create a new environ and define 'super' there
-  if (superClass.has_value()) {
-    environManager.createNewEnviron();
-    environManager.define("super", superClass.value());
-  }
-
-  std::vector<std::pair<std::string, LoxObject>> methods;
-  std::shared_ptr<Environment> closure = environManager.getCurrEnv();
-  for (const auto& stmt : stmt->methods) {
-    const auto& functionStmt = std::get<FuncStmtPtr>(stmt);
-    bool isInitializer = functionStmt->funcName.getLexeme() == "init";
-    LoxObject method = std::make_shared<FuncObj>(
-        functionStmt->funcExpr, functionStmt->funcName.getLexeme(),
-        closure, true, isInitializer);
-    methods.emplace_back(functionStmt->funcName.getLexeme(), method);
-  }
-
-  // Discard the environment created for defining 'super'
-  if (superClass.has_value()) {
-    environManager.setCurrEnv(environManager.getCurrEnv()->getParentEnv());
-  }
-
-  // Declare the class
-  environManager.assign(stmt->className,
-                        std::make_shared<LoxClass>(stmt->className.getLexeme(),
-                                                   superClass, methods));
-
-  // Create a new environment so changes that occur afterwards in lexical order
-  // aren't visible to the class defn.
-  environManager.createNewEnviron();
-
-  return std::nullopt;
-}
-
-auto Evaluator::evaluateStmt(const AST::StmtPtrVariant& stmt)
-    -> std::optional<LoxObject> {
-  switch (stmt.index()) {
-    case 0:  // ExprStmtPtr
-      return evaluateExprStmt(std::get<0>(stmt));
-    case 1:  // PrintStmtPtr
-      return evaluatePrintStmt(std::get<1>(stmt));
-    case 2:  // BlockStmtPtr
-      return evaluateBlockStmt(std::get<2>(stmt));
-    case 3:  // VarStmtPtr
-      return evaluateVarStmt(std::get<3>(stmt));
-    case 4:  // IfStmtPtr
-      return evaluateIfStmt(std::get<4>(stmt));
-    case 5:  // WhileStmtPtr
-      return evaluateWhileStmt(std::get<5>(stmt));
-    case 6:  // ForStmtPtr
-      return evaluateForStmt(std::get<6>(stmt));
-    case 7:  // FuncStmtPtr
-      return evaluateFuncStmt(std::get<7>(stmt));
-    case 8:  // RetStmtPtr
-      return evaluateRetStmt(std::get<8>(stmt));
-    case 9:  // ClassStmtPtr
-      return evaluateClassStmt(std::get<9>(stmt));
-    default:
-      static_assert(
-          std::variant_size_v<StmtPtrVariant> == 10,
-          "Looks like you forgot to update the cases in "
-          "PrettyPrinter::toString(const StmtPtrVariant& statement)!");
-      return std::nullopt;
-  }
-}
-
-auto Evaluator::evaluateStmts(const std::vector<AST::StmtPtrVariant>& stmts)
-    -> std::optional<LoxObject> {
-  std::optional<LoxObject> result = std::nullopt;
-  for (const AST::StmtPtrVariant& stmt : stmts) {
-    try {
-      result = evaluateStmt(stmt);
-      if (result.has_value()) break;
-    } catch (const ErrorsAndDebug::RuntimeError& e) {
-      ErrorsAndDebug::debugPrint("Caught unhandled exception.");
-      if (EXPECT_FALSE(++numRunTimeErr > MAX_RUNTIME_ERR)) {
-        std::cerr << "Too many errors occurred. Exiting evaluation."
-                  << std::endl;
-        throw e;
-      }
+    auto Evaluator::evaluate_func_expr(const FuncExprPtr &expr) -> csm_object
+    {
+        auto closure = environManager.get_curr_env();
+        environManager.create_new_environ();
+        return std::make_shared<FuncObj>(expr, "LoxAnonFuncDoNotUseThisNameAADWAED", std::move(closure));
     }
-  }
-  return result;
-}
 
-class clockBuiltin : public BuiltinFunc {
- public:
-  explicit clockBuiltin(Environment::EnvironmentPtr closure)
-      : BuiltinFunc("clock", std::move(closure)) {}
-  auto arity() -> size_t override { return 0; }
-  auto run() -> LoxObject override {
-    return static_cast<double>(
-        std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::high_resolution_clock::now().time_since_epoch())
-            .count());
-  }
-  auto getFnName() -> std::string override { return "< builtin-fn_clock >"; }
-};
+    auto Evaluator::evaluate_get_expr(const GetExprPtr &expr) -> csm_object
+    {
+        csm_object instObj = evaluate_expr(expr->expr);
+        if (EXPECT_FALSE(!std::holds_alternative<csm_instance_shrd_ptr>(instObj)))
+            // throw reportRuntimeError(eReporter, expr->name, "Only instances have properties");
+            try
+            {
+                csm_object property = std::get<csm_instance_shrd_ptr>(instObj)->get(expr->name.get_lexeme());
+                if (std::holds_alternative<func_shrd_ptr>(property))
+                {
+                    property = csm_object(bind_instance(std::get<func_shrd_ptr>(property), std::get<csm_instance_shrd_ptr>(instObj)));
+                }
+                return property;
 
-Evaluator::Evaluator(ErrorReporter& eReporter)
-    : eReporter(eReporter), environManager(eReporter) {
-  environManager.define(
-      Types::Token(TokenType::FUN, "clock"),
-      static_cast<BuiltinFuncShrdPtr>(
-          std::make_shared<clockBuiltin>(environManager.getCurrEnv())));
-}
+                //   WIP: } catch (const ErrorsAndDebug::RuntimeError& e) {
+            }
+            catch (std::exception &e)
+            {
+                // throw ErrorsAndDebug::reportRuntimeError( eReporter, expr->name, "Attempted to access undefined property: " + expr->name.get_lexeme() + " on " + std::get<LoxInstanceShrdPtr>(instObj)->toString());
+            }
+    }
 
-}  // namespace cpplox::Evaluator
+    auto Evaluator::evaluate_set_expr(const AST::SetExprPtr &expr) -> csm_object
+    {
+        csm_object object = evaluate_expr(expr->expr);
+        if (EXPECT_FALSE(!std::holds_alternative<csm_instance_shrd_ptr>(object)))
+            // throw ErrorsAndDebug::reportRuntimeError(eReporter, expr->name, "Only instances have fields.");
+            csm_object value = evaluate_expr(expr->value);
+        std::get<csm_instance_shrd_ptr>(object)->set(expr->name.get_lexeme(), value);
+        return value;
+    }
+
+    auto Evaluator::evaluate_this_expr(const ThisExprPtr &expr) -> csm_object
+    {
+        return environManager.get(expr->keyword);
+    }
+
+    auto Evaluator::evaluate_super_expr(const SuperExprPtr &expr) -> csm_object
+    {
+        csm_class_shrd_ptr superClass = std::get<csm_class_shrd_ptr>(environManager.get(expr->keyword));
+        auto optionalMethod = superClass->find_method(expr->method.get_lexeme());
+        if (!optionalMethod.has_value())
+            // throw ErrorsAndDebug::reportRuntimeError( eReporter, expr->keyword, "Attempted to access undefined property " + expr->keyword.get_lexeme() + " on super.");
+
+            return bind_instance(std::get<func_shrd_ptr>(optionalMethod.value()), std::get<csm_instance_shrd_ptr>(environManager.get(Token(TokenType::THIS, "this"))));
+    }
+
+    auto Evaluator::evaluate_expr(const ExprPtrVariant &expr) -> csm_object
+    {
+        switch (expr.index())
+        {
+        case 0: // BinaryExprPtr
+            return evaluate_binary_expr(std::get<0>(expr));
+        case 1: // GroupingExprPtr
+            return evaluate_grouping_expr(std::get<1>(expr));
+        case 2: // LiteralExprPtr
+            return evaluate_literal_expr(std::get<2>(expr));
+        case 3: // UnaryExprPtr
+            return evaluate_unary_expr(std::get<3>(expr));
+        case 4: // ConditionalExprPtr
+            return evaluate_conditional_expr(std::get<4>(expr));
+        case 5: // PostfixExprPtr
+            return evaluate_postfix_expr(std::get<5>(expr));
+        case 6: // VariableExprPtr
+            return evaluate_variable_expr(std::get<6>(expr));
+        case 7: // AssignmentExprPtr
+            return evaluate_assignment_expr(std::get<7>(expr));
+        case 8: // LogicalExprPtr
+            return evaluate_logical_expr(std::get<8>(expr));
+        case 9: // CallExprPtr
+            return evaluate_call_expr(std::get<9>(expr));
+        case 10: // FuncExprPtr
+            return evaluate_func_expr(std::get<10>(expr));
+        case 11: // GetExprPtr
+            return evaluate_get_expr(std::get<11>(expr));
+        case 12: // SetExprPtr
+            return evaluate_set_expr(std::get<12>(expr));
+        case 13: // ThisExprPtr
+            return evaluate_this_expr(std::get<13>(expr));
+        case 14: // SuperExprPtr
+            return evaluate_super_expr(std::get<14>(expr));
+        default:
+            static_assert(std::variant_size_v<ExprPtrVariant> == 15, "Looks like you forgot to update the cases in Evaluator::Evaluate(const ExptrVariant&)!");
+            return "";
+        }
+    }
+
+    // ----------------- Statement Evaluation Methods -----------------
+
+    auto Evaluator::evaluate_expr_stmt(const ExprStmtPtr &stmt)
+        -> std::optional<csm_object>
+    {
+#ifdef EVAL_DEBUG
+//   ErrorsAndDebug::debugPrint("evaluate_expr_stmt called.");
+#endif // EVAL_DEBUG
+
+        csm_object result = evaluate_expr(stmt->expression);
+
+#ifdef EVAL_DEBUG
+//   ErrorsAndDebug::debugPrint("evaluate_expr_stmt: expression evaluation result: " + getObjectString(result));
+#endif // EVAL_DEBUG
+        return std::nullopt;
+    }
+
+    auto Evaluator::evaluate_print_stmt(const PrintStmtPtr &stmt) -> std::optional<csm_object>
+    {
+#ifdef EVAL_DEBUG
+//   ErrorsAndDebug::debugPrint("evaluatePrintStmt called.");
+#endif // EVAL_DEBUG
+
+        csm_object objectToPrint = evaluate_expr(stmt->expression);
+        std::cout << ">" << get_object_string(objectToPrint) << std::endl;
+
+#ifdef EVAL_DEBUG
+        ErrorsAndDebug::debugPrint("evaluatePrintStmt should have printed." + getObjectString(objectToPrint));
+#endif // EVAL_DEBUG
+        return std::nullopt;
+    }
+
+    auto Evaluator::evaluate_block_stmt(const BlockStmtPtr &stmt) -> std::optional<csm_object>
+    {
+        auto currEnviron = environManager.get_curr_env();
+        environManager.create_new_environ();
+        std::optional<csm_object> result = evaluate_stmts(stmt->statements);
+        environManager.discard_environs_till(currEnviron);
+        return result;
+    }
+
+    auto Evaluator::evaluate_var_stmt(const VarStmtPtr &stmt) -> std::optional<csm_object>
+    {
+        if (stmt->initializer.has_value())
+        {
+            environManager.define(stmt->varName, evaluate_expr(stmt->initializer.value()));
+        }
+        else
+        {
+            environManager.define(stmt->varName, csm_object(nullptr));
+        }
+        return std::nullopt;
+    }
+
+    auto Evaluator::evaluate_if_stmt(const IfStmtPtr &stmt) -> std::optional<csm_object>
+    {
+        if (is_true(evaluate_expr(stmt->condition)))
+            return evaluate_stmt(stmt->thenBranch);
+        if (stmt->elseBranch.has_value())
+            return evaluate_stmt(stmt->elseBranch.value());
+        return std::nullopt;
+    }
+
+    auto Evaluator::evaluate_while_stmt(const WhileStmtPtr &stmt) -> std::optional<csm_object>
+    {
+        std::optional<csm_object> result = std::nullopt;
+        while (is_true(evaluate_expr(stmt->condition)) && !result.has_value())
+        {
+            result = evaluate_stmt(stmt->loopBody);
+        }
+        return result;
+    }
+
+    auto Evaluator::evalaute_for_stmt(const ForStmtPtr &stmt) -> std::optional<csm_object>
+    {
+        std::optional<csm_object> result = std::nullopt;
+        if (stmt->initializer.has_value())
+            evaluate_stmt(stmt->initializer.value());
+        while (true)
+        {
+            if (stmt->condition.has_value() && !is_true(evaluate_expr(stmt->condition.value())))
+                break;
+            result = evaluate_stmt(stmt->loopBody);
+            if (result.has_value())
+                break;
+            if (stmt->increment.has_value())
+                evaluate_expr(stmt->increment.value());
+        }
+        return result;
+    }
+
+    auto Evaluator::evalaute_func_stmt(const FuncStmtPtr &stmt) -> std::optional<csm_object>
+    {
+        std::shared_ptr<Environment> closure = environManager.get_curr_env();
+
+        environManager.define(stmt->funcName, std::make_shared<FuncObj>(stmt->funcExpr, stmt->funcName.get_lexeme(), std::move(closure)));
+        environManager.create_new_environ();
+        return std::nullopt;
+    }
+
+    auto Evaluator::evaluate_ret_stmt(const RetStmtPtr &stmt) -> std::optional<csm_object>
+    {
+        return stmt->value.has_value() ? std::make_optional(evaluate_expr(stmt->value.value())) : std::nullopt;
+    }
+
+    auto Evaluator::evaluate_class_stmt(const ClassStmtPtr &stmt) -> std::optional<csm_object>
+    {
+        auto superClass = [&]() -> std::optional<csm_class_shrd_ptr>
+        {
+            if (stmt->superClass.has_value())
+            {
+                auto superClassObj = evaluate_expr(stmt->superClass.value());
+                if (!std::holds_alternative<csm_class_shrd_ptr>(superClassObj))
+                    // throw ErrorsAndDebug::reportRuntimeError( eReporter, stmt->className, "Superclass must be a class; Can't inherit from non-class");
+                    return std::get<csm_class_shrd_ptr>(superClassObj);
+            }
+            return std::nullopt;
+        }();
+
+        environManager.define(stmt->className, csm_object(nullptr));
+
+        if (superClass.has_value())
+        {
+            environManager.create_new_environ();
+            environManager.define("super", superClass.value());
+        }
+
+        std::vector<std::pair<std::string, csm_object>> methods;
+        std::shared_ptr<Environment> closure = environManager.get_curr_env();
+        for (const auto &stmt : stmt->methods)
+        {
+            const auto &functionStmt = std::get<FuncStmtPtr>(stmt);
+            bool isInitializer = functionStmt->funcName.get_lexeme() == "init";
+            csm_object method = std::make_shared<FuncObj>(
+                functionStmt->funcExpr, functionStmt->funcName.get_lexeme(),
+                closure, true, isInitializer);
+            methods.emplace_back(functionStmt->funcName.get_lexeme(), method);
+        }
+
+        if (superClass.has_value())
+        {
+            environManager.set_curr_env(environManager.get_curr_env()->get_parent_env());
+        }
+
+        environManager.assign(stmt->className, std::make_shared<CsmClass>(stmt->className.get_lexeme(), superClass, methods));
+
+        environManager.create_new_environ();
+
+        return std::nullopt;
+    }
+
+    auto Evaluator::evaluate_stmt(const AST::StmtPtrVariant &stmt) -> std::optional<csm_object>
+    {
+        switch (stmt.index())
+        {
+        case 0: // ExprStmtPtr
+            return evaluate_expr_stmt(std::get<0>(stmt));
+        case 1: // PrintStmtPtr
+            return evaluate_print_stmt(std::get<1>(stmt));
+        case 2: // BlockStmtPtr
+            return evaluate_block_stmt(std::get<2>(stmt));
+        case 3: // VarStmtPtr
+            return evaluate_var_stmt(std::get<3>(stmt));
+        case 4: // IfStmtPtr
+            return evaluate_if_stmt(std::get<4>(stmt));
+        case 5: // WhileStmtPtr
+            return evaluate_while_stmt(std::get<5>(stmt));
+        case 6: // ForStmtPtr
+            return evalaute_for_stmt(std::get<6>(stmt));
+        case 7: // FuncStmtPtr
+            return evalaute_func_stmt(std::get<7>(stmt));
+        case 8: // RetStmtPtr
+            return evaluate_ret_stmt(std::get<8>(stmt));
+        case 9: // ClassStmtPtr
+            return evaluate_class_stmt(std::get<9>(stmt));
+        default:
+            static_assert(
+                std::variant_size_v<StmtPtrVariant> == 10, "Looks like you forgot to update the cases in PrettyPrinter::toString(const StmtPtrVariant& statement)!");
+            return std::nullopt;
+        }
+    }
+
+    auto Evaluator::evaluate_stmts(const std::vector<AST::StmtPtrVariant> &stmts) -> std::optional<csm_object>
+    {
+        std::optional<csm_object> result = std::nullopt;
+        for (const AST::StmtPtrVariant &stmt : stmts)
+        {
+            try
+            {
+                result = evaluate_stmt(stmt);
+                if (result.has_value())
+                    break;
+
+                // WIP: } catch (const ErrorsAndDebug::RuntimeError& e) {
+            }
+            catch (const std::exception &e)
+            {
+                //   ErrorsAndDebug::debugPrint("Caught unhandled exception.");
+                if (EXPECT_FALSE(++num_runtime_err > MAX_RUNTIME_ERR))
+                {
+                    std::cerr << "Too many errors occurred. Exiting evaluation." << std::endl;
+                    throw e;
+                }
+            }
+        }
+        return result;
+    }
+
+    class clockBuiltin : public BuiltInFunc
+    {
+    public:
+        explicit clockBuiltin(Environment::environment_ptr closure) : BuiltInFunc("clock", std::move(closure)) {}
+        auto arity() -> size_t override { return 0; }
+        auto run() -> csm_object override
+        {
+            return static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+        }
+        auto get_fn_name() -> std::string override { return "< builtin-fn_clock >"; }
+    };
+
+    // WIP: add ereporter
+    Evaluator::Evaluator()
+    {
+        environManager.define(Types::Token(TokenType::MISSION, "clock"), static_cast<built_in_func_shrd_ptr>(std::make_shared<clockBuiltin>(environManager.get_curr_env())));
+    }
+
+} // namespace cosmos::Evaluator
