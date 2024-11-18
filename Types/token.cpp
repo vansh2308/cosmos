@@ -1,6 +1,6 @@
 
-#include "Types/literal.h"
-#include "Types/token.h"
+#include "literal.h"
+#include "token.h"
 
 #include <map>
 #include <type_traits>

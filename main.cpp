@@ -12,6 +12,9 @@ int main(int argc, char const *argv[]){
 
     cosmos::InterpreterDriver interpreter;
 
+    // interpreter.run_script("sample_programs/sample.csm");
+    // return 0;
+
     if(argc == 2){
         interpreter.run_script(argv[1]);
     }

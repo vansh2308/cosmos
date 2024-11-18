@@ -1,5 +1,5 @@
 
-#include "InterpreterDriver/InterpreterDriver.h"
+#include "InterpreterDriver.h"
 
 #include <iostream>
 #include <exception>
@@ -11,10 +11,10 @@
 #include <string>
 #include <vector>
 
-#include "AST/prettyPrinter.h"
-#include "Types/token.h"
-#include "Parser/parser.h"
-#include "Scanner/scanner.h"
+#include "../AST/prettyPrinter.h"
+#include "../Types/token.h"
+#include "../Parser/parser.h"
+#include "../Scanner/scanner.h"
 
 namespace cosmos{
     using Parser::RDParser;
@@ -104,7 +104,7 @@ namespace cosmos{
     void InterpreterDriver::interpret(const std::string& source){
         try{
 
-            
+
 
 #ifdef PERF_DEBUG
     auto scan_start_time = std::chrono::high_resolution_clock::now();

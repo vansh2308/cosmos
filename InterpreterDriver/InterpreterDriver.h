@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "AST/nodeTypes.h"
-#include "Evaluator/evaluator.h"
+#include "../AST/nodeTypes.h"
+#include "../Evaluator/evaluator.h"
 
 
 namespace cosmos{

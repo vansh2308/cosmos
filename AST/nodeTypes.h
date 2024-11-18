@@ -8,9 +8,9 @@
 #include <variant>
 #include <vector>
 
-#include "Types/token.h"
-#include "Types/literal.h"
-#include "Types/uncopyable.h"
+#include "../Types/token.h"
+#include "../Types/literal.h"
+#include "../Types/uncopyable.h"
 
 namespace cosmos::AST{
     using Types::Literal;

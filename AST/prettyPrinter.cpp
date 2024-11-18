@@ -1,11 +1,11 @@
-#include "AST/prettyPrinter.h"
+#include "prettyPrinter.h"
 
 #include <iterator>
 #include <utility>
 #include <vector>
 
 #include "nodeTypes.h"
-#include "Types/literal.h"
+#include "../Types/literal.h"
 
 
 namespace cosmos::AST{

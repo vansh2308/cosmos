@@ -1,4 +1,4 @@
-#include "Evaluator/evaluator.h"
+#include "evaluator.h"
 
 #include <chrono>
 #include <cstddef>
@@ -10,10 +10,10 @@
 #include <utility>
 #include <variant>
 
-#include "AST/prettyPrinter.h"
-#include "Evaluator/objects.h"
-#include "Types/literal.h"
-#include "Types/token.h"
+#include "../AST/prettyPrinter.h"
+#include "objects.h"
+#include "../Types/literal.h"
+#include "../Types/token.h"
 
 #define EXPECT_TRUE(x) __builtin_expect(static_cast<int64_t>(x), 1)
 #define EXPECT_FALSE(x) __builtin_expect(static_cast<int64_t>(x), 0)

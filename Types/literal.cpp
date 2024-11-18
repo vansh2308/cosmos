@@ -1,5 +1,5 @@
 
-#include "Types/literal.h"
+#include "literal.h"
 
 namespace cosmos::Types{
     auto get_literal_string(const Literal& value) -> std::string {

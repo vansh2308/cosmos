@@ -10,9 +10,9 @@
 #include <memory>
 #include <optional>
 
-#include "Evaluator/objects.h"
-#include "Types/token.h"
-#include "Types/uncopyable.h"
+#include "objects.h"
+#include "../Types/token.h"
+#include "../Types/uncopyable.h"
 
 namespace cosmos::Evaluator{
     // WIP: Add debugger 

@@ -1,9 +1,9 @@
 
-#include "Scanner/scanner.h"
+#include "scanner.h"
 
 #include <map>
 
-#include "Types/token.h"
+#include "../Types/token.h"
 
 namespace cosmos{
     using Types::Literal;
@@ -133,7 +133,7 @@ namespace cosmos{
     } 
 
     auto Scanner::peek() -> char {
-        if(is_at_end) return '\0';
+        if(is_at_end()) return '\0';
         return source[current];
     }
 

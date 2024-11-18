@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "Types/token.h"
+#include "../Types/token.h"
 
 namespace cosmos{
     using Types::Token;

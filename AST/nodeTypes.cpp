@@ -1,5 +1,5 @@
 
-#include "AST/nodeTypes.h"
+#include "nodeTypes.h"
 
 #include <initializer_list>
 #include <memory>

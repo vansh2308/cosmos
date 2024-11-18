@@ -7,9 +7,9 @@
 #include <string>
 #include <variant>
 
-#include "Types/uncopyable.h"
-#include "Types/token.h"
-#include "AST/nodeTypes.h"
+#include "../Types/uncopyable.h"
+#include "../Types/token.h"
+#include "../AST/nodeTypes.h"
 
 namespace cosmos::Evaluator{
     class FuncObj;

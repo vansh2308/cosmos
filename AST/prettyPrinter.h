@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "AST/nodeTypes.h"
+#include "nodeTypes.h"
 
 namespace cosmos::AST::PrettyPrinter {
 

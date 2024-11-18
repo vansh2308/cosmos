@@ -8,8 +8,8 @@
 #include <iterator>
 #include <vector>
 
-#include "AST/nodeTypes.h"
-#include "Types/token.h"
+#include "../AST/nodeTypes.h"
+#include "../Types/token.h"
 
 
 // Grammar production rules:

@@ -8,11 +8,11 @@
 #include <string>
 #include <vector>
 
-#include "AST/nodeTypes.h"
-#include "Evaluator/environment.h"
-#include "Evaluator/objects.h"
-#include "Types/token.h"
-#include "Types/uncopyable.h"
+#include "../AST/nodeTypes.h"
+#include "environment.h"
+#include "objects.h"
+#include "../Types/token.h"
+#include "../Types/uncopyable.h"
 
 namespace cosmos::Evaluator {
     using AST::AssignmentExprPtr;
