@@ -1,20 +1,28 @@
-cmake_minimum_required(VERSION 3.12)
-project(HelloWorld)
+cmake_minimum_required(VERSION 3.14)
+project(cosmos)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#Add the library
-add_library(ASTNodes AST/nodeTypes.cpp AST/nodeTypes.h)
-add_library(prettyPrinter AST/prettyPrinter.cpp AST/prettyPrinter.h)
-add_library(evaluator Evaluator/environment.cpp Evaluator/environment.h Evaluator/evaluator.cpp Evaluator/evaluator.h Evaluator/objects.cpp Evaluator/objects.h)
-add_library(interpreterDriver interpreterDriver/InterpreterDriver.cpp interpreterDriver/InterpreterDriver.h)
-add_library(parser Parser/parser.cpp Parser/parser.h)
-add_library(scanner Scanner/scanner.cpp Scanner/scanner.h)
-add_library(types Types/literal.cpp Types/literal.h Types/token.cpp Types/token.h Types/uncopyable.h)
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
 
-#build the executable
-add_executable(cosmos main.cpp)
+FetchContent_MakeAvailable(googletest)
 
 
-#Link the executable with the library
-target_link_libraries(cosmos ASTNodes prettyPrinter evaluator interpreterDriver parser scanner types)
+enable_testing()
+
+add_executable(
+  hello_test
+  hello_test.cpp
+)
+target_link_libraries(
+  hello_test
+  GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(hello_test)

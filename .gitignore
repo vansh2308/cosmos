@@ -1,13 +1,1 @@
-*.exe
-main.exe.**
-.vscode
-bazel-*
-MODULE.bazel.lock
-
-/CMakeFiles
-*.cmake
-CMakeCache.txt
-Makefile
-
-*.a
-cosmos
+/build
