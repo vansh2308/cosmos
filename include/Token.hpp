@@ -2,7 +2,8 @@
 #define TOKEN_HPP
 #include <string>
 
-enum class TokenType{
+enum class TokenType
+{
     // Single-character tokens
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
     COMMA, DOT, MINUS, PLUS, SLASH, SEMICOLON, STAR,
@@ -21,7 +22,7 @@ enum class TokenType{
     _EOF
 };
 
-struct Token{
+struct Token {
     Token(TokenType type, std::string lexeme, unsigned int line);
     Token(Token&& token) noexcept;
     Token(const Token& token);

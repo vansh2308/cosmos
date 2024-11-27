@@ -1,15 +1,17 @@
+#include "../include/Interpreter.hpp"
+#include "../include/Lexer.hpp"
+#include "../include/Logger.hpp"
+#include "../include/Parser.hpp"
+#include "../include/Resolver.hpp"
+
 #include <fstream>
-#include <iostream>
-#include <string>
-#include "../include/Token.hpp"
 
-std::string read_file(std::string_view filename){
-    std::ifstream file(filename.data(), std::ios::ate);
-    if(!file){
-        std::cerr << "Failed to open file " << filename.data() << "\n";
-        std::exit(74); // IO error
+std::string readFile(std::string_view filename) {
+    std::ifstream file{filename.data(), std::ios::ate};
+    if (!file) {
+        std::cerr << "Failed to open file " << filename.data() << '\n';
+        std::exit(74); // I/O error
     }
-
     std::string file_contents;
     file_contents.resize(file.tellg());
     file.seekg(0, std::ios::beg);
@@ -19,48 +21,71 @@ std::string read_file(std::string_view filename){
     return file_contents;
 }
 
+void run(const std::string& source) {
+    Lexer lexer{source};
+    auto tokens = lexer.scanTokens();
+    Parser parser{std::move(tokens)};
+    const auto statements = parser.parse();
 
-void run(const std::string& source){
-    // WIP 
+    if (Error::hadError) {
+        Error::report();
+        return;
+    }
+
+    Interpreter interpreter;
+    Resolver resolver{interpreter};
+    resolver.resolve(statements);
+
+    if (Error::hadError) {
+        Error::report();
+        return;
+    }
+
+    interpreter.interpret(statements);
+    if (Error::hadRuntimeError) {
+        Error::report();
+    }
 }
 
-
-void init_file(const std::string& filename){
-    std::string file_contents = read_file(filename);
+void initFile(const std::string& filename) {
+    std::string file_contents = readFile(filename);
     run(file_contents);
-
-    // WIP: Add compile / runtime errors
+    if (Error::hadError) {
+        std::exit(65);
+    }
+    if (Error::hadRuntimeError) {
+        std::exit(70);
+    }
 }
 
-
-
-void run_prompt(){
-    while(true){
+void runPrompt() {
+    while (true) {
         std::cout << "> ";
         std::string line;
-        if(!std::getline(std::cin, line)){
+        if (!std::getline(std::cin, line)) {
             return;
         }
 
         run(line);
-
-        // WIP: Add compile / runtime errors
-
+        if (Error::hadError) {
+            std::exit(65);
+        }
+        if (Error::hadRuntimeError) {
+            std::exit(70);
+        }
         std::cout << "\n";
-
     }
 }
 
 
 
-int main(int argc, char* argv[]){
-    if(argc > 2){
+int main(int argc, char* argv[]) {
+    if (argc > 2) {
         std::exit(64);
-    } else if (argc == 2){
-        init_file(argv[1]);
+    } else if (argc == 2) {
+        initFile(argv[1]);
     } else {
-        run_prompt();
+        runPrompt();
     }
-
     return 0;
 }

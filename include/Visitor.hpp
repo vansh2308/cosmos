@@ -1,6 +1,5 @@
-
 #ifndef VISITOR_HPP
-#define VISTIOR_HPP
+#define VISITOR_HPP
 
 #include <any>
 
@@ -22,7 +21,7 @@ struct IncrementExpr;
 struct DecrementExpr;
 
 template <typename T>
-struct ExprVisitor{
+struct ExprVisitor {
     virtual T visit(const AssignExpr& expr) = 0;
     virtual T visit(const BinaryExpr& expr) = 0;
     virtual T visit(const CallExpr& expr) = 0;
@@ -42,7 +41,7 @@ struct ExprVisitor{
     virtual ~ExprVisitor() = default;
 };
 
-struct Expr{
+struct Expr {
     virtual ~Expr() = default;
     virtual std::any accept(ExprVisitor<std::any>& visitor) const = 0;
 };
@@ -60,7 +59,7 @@ struct VarStmt;
 struct WhileStmt;
 struct ForStmt;
 
-struct StmtVisitor{
+struct StmtVisitor {
     virtual void visit(const BlockStmt& stmt) = 0;
     virtual void visit(const ClassStmt& stmt) = 0;
     virtual void visit(const ExprStmt& stmt) = 0;
@@ -76,7 +75,7 @@ struct StmtVisitor{
     virtual ~StmtVisitor() = default;
 };
 
-struct Stmt{
+struct Stmt {
     virtual ~Stmt() = default;
     virtual void accept(StmtVisitor& visitor) const = 0;
 };

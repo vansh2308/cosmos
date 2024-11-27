@@ -9,8 +9,18 @@ target_include_directories(cosmos
 
 target_sources(cosmos 
     PUBLIC 
+        ExprNode.cpp
+        Lexer.cpp
+        Logger.cpp
+        Parser.cpp
+        StmtNode.cpp
         Token.cpp
-        main.cpp
+        Interpreter.cpp
+        Environment.cpp
+        FunctionType.cpp
+        BuiltIn.cpp
+        ListType.cpp
+        Resolver.cpp
 )
 
 add_executable(main main.cpp)

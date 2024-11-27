@@ -1,24 +1,20 @@
-
 #include "../include/Token.hpp"
 #include <algorithm>
 #include <iostream>
 #include <map>
 
-Token::Token(TokenType type , std::string lexeme, unsigned int line) : type{type}, lexeme{std::move(lexeme)}, line{line} {
-
+Token::Token(TokenType type, std::string lexeme, unsigned int line) : type{type}, lexeme{std::move(lexeme)}, line{line} {
 }
 
-Token::Token(Token&& token) noexcept : type{token.type}, lexeme{std::move(token.lexeme)}, line{line} {
-
+Token::Token(Token&& token) noexcept : type{token.type}, lexeme{std::move(token.lexeme)}, line{token.line} {
 }
 
 Token::Token(const Token& token) : type{token.type}, lexeme{token.lexeme}, line{token.line} {
-
 }
 
 std::ostream& operator<<(std::ostream& os, const TokenType type) {
     using enum TokenType;
-    /* clang-format off */ 
+    /* clang-format off */
     static const std::map<TokenType, std::string> type_map{
             {LEFT_PAREN,        "LEFT_PAREN"},
             {RIGHT_PAREN,       "RIGHT_PAREN"},
@@ -51,7 +47,6 @@ std::ostream& operator<<(std::ostream& os, const TokenType type) {
             {NOVA,              "NOVA"},
             {PROBE,             "PROBE"},
             {BLACKHOLE,         "BLACKHOLE"},
-            {ELPROBE,           "ELPROBE"},
             {VOID,              "VOID"},
             {COSMIC,            "COSMIC"},
             {MISSION,           "MISSION"},
@@ -60,12 +55,12 @@ std::ostream& operator<<(std::ostream& os, const TokenType type) {
             {NIL,               "NIL"},
             {FLARE,             "FLARE"},
             {TRANSMIT,          "TRANSMIT"},
+            {EJECT,             "EJECT"},
+            {WARP,              "WARP"},
             {SUPERNOVA,         "SUPERNOVA"},
             {THIS,              "THIS"},
             {ATOM,              "ATOM"},
             {LAMBDA,            "LAMBDA"},
-            {EJECT,             "EJECT"},
-            {WARP,              "WARP"},
             {_EOF,              "EOF"},
     };
     /* clang-format on */
@@ -73,8 +68,7 @@ std::ostream& operator<<(std::ostream& os, const TokenType type) {
     return os;
 }
 
-
-std::ostream& operator<<(std::ostream& os, const Token& token){
-    os << token.type << ' '<< token.lexeme;
+std::ostream& operator<<(std::ostream& os, const Token& token) {
+    os << token.type << ' ' << token.lexeme;
     return os;
 }

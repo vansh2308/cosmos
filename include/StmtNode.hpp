@@ -1,4 +1,3 @@
-
 #ifndef STMT_HPP
 #define STMT_HPP
 
@@ -8,13 +7,12 @@
 #include "Visitor.hpp"
 #include <vector>
 
-struct BlockStmt: Stmt {
+struct BlockStmt : Stmt {
     std::vector<unique_stmt_ptr> statements;
 
     explicit BlockStmt(std::vector<unique_stmt_ptr> statements);
     void accept(StmtVisitor& visitor) const override;
 };
-
 
 struct ClassStmt : Stmt {
     Token identifier;
@@ -32,8 +30,6 @@ struct ExprStmt : Stmt {
     void accept(StmtVisitor& visitor) const override;
 };
 
-
-
 struct FnStmt : Stmt {
     Token identifier;
     std::vector<Token> params;
@@ -42,7 +38,6 @@ struct FnStmt : Stmt {
     FnStmt(Token identifier, std::vector<Token> params, std::vector<unique_stmt_ptr> body);
     void accept(StmtVisitor& visitor) const override;
 };
-
 
 struct IfBranch {
     unique_expr_ptr condition;
@@ -66,8 +61,6 @@ struct PrintStmt : Stmt {
     explicit PrintStmt(unique_expr_ptr expr);
     void accept(StmtVisitor& visitor) const override;
 };
-
-
 
 struct ReturnStmt : Stmt {
     Token keyword;
@@ -99,7 +92,6 @@ struct VarStmt : Stmt {
     void accept(StmtVisitor& visitor) const override;
 };
 
-
 struct WhileStmt : Stmt {
     unique_expr_ptr condition;
     unique_stmt_ptr body;
@@ -118,8 +110,4 @@ struct ForStmt : Stmt {
     void accept(StmtVisitor& visitor) const override;
 };
 
-
-
-
-
-#endif
+#endif // STMT_HPP

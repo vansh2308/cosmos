@@ -1,0 +1,64 @@
+mission fib(n) {
+  probe (n < 2) transmit n;
+  transmit fib(n - 2) + fib(n - 1);
+}
+
+atom start = clock();
+print(fib(10));
+print(clock() - start);
+
+
+print("\n");
+print("For loop:");
+navigate(atom i=0; i<5; i++){
+    print(i);
+}
+print("\n");
+
+print("While loop:");
+atom i = 10;
+orbit(i>0){
+    print(i*2);
+    i--;
+}
+print("\n");
+
+print(6/7);
+
+mission sum(a, b){
+    transmit (a+b);
+}
+
+atom lst = [3, 5, 6, 90];
+print(lst[3]);
+
+atom x = 9;
+probe(x == "HAre krishna"){
+    print("pass");
+} elprobe (x == 5) {
+    print("loda");
+} blackhole {
+    print("fail");
+}
+
+print(sum(4, 6));
+
+
+
+print("\n");
+
+mission makeGreeter(greeting)  {
+    mission greeter(name)  {
+        atom say = greeting + " " + name;
+        print(say);
+    }
+
+    transmit greeter;
+}
+
+
+atom hello = makeGreeter("Hello"); 
+atom terve = makeGreeter("Terve"); 
+
+hello("Foo"); // Prints: Hello Foo
+terve("Bar"); // Prints: Terve Bar
