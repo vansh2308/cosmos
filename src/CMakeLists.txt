@@ -9,6 +9,8 @@ target_include_directories(cosmos
 
 target_sources(cosmos 
     PUBLIC 
+        Token.cpp
+        main.cpp
 )
 
 add_executable(main main.cpp)

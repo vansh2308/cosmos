@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(cosmos
-    LANGUAGE CXX 
+    LANGUAGES CXX 
     VERSION 0.1.0 
 )
 

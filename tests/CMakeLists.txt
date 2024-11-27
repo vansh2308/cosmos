@@ -11,6 +11,8 @@ add_executable(unit_test)
 
 target_sources(unit_test
     PRIVATE 
+        main.cpp
+        
 )
 
 target_include_directories(main
