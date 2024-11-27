@@ -62,3 +62,4 @@ atom terve = makeGreeter("Terve");
 
 hello("Foo"); // Prints: Hello Foo
 terve("Bar"); // Prints: Terve Bar
+
